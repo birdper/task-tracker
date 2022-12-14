@@ -1,5 +1,6 @@
 package com.aalsamarin.tasktracker.service.impl
 
+import com.aalsamarin.tasktracker.dto.PageProjectDto
 import com.aalsamarin.tasktracker.dto.ProjectDto
 import com.aalsamarin.tasktracker.exception.ProjectNotFound
 import com.aalsamarin.tasktracker.mapper.ProjectMapper
@@ -7,6 +8,7 @@ import com.aalsamarin.tasktracker.mapper.TaskMapper
 import com.aalsamarin.tasktracker.repository.ProjectRepository
 import com.aalsamarin.tasktracker.repository.TaskRepository
 import com.aalsamarin.tasktracker.service.ProjectService
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -20,7 +22,17 @@ class ProjectServiceImpl(
 ) : ProjectService {
 
     override fun getAllProjects(): List<ProjectDto> =
-        projectRepository.findAll().map(projectMapper::toDto)
+        projectRepository.findAll()
+            .map(projectMapper::toDto)
+
+    override fun getPageProjects(pageable: Pageable): PageProjectDto {
+        val pageProjects = projectRepository.findAll(pageable)
+        return PageProjectDto(
+            currentPage = pageProjects.number,
+            totalPages = pageProjects.totalPages,
+            projects = pageProjects.content.map(projectMapper::toDto)
+        )
+    }
 
     override fun getById(id: Int): ProjectDto =
         projectRepository.findByIdOrNull(id)
