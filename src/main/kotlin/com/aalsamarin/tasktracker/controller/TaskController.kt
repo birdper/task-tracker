@@ -27,7 +27,8 @@ class TaskController(
         taskService.create(taskDto)
 
     @PostMapping("/tasks/{id}")
-    fun updateTask(@PathVariable id: Int, @RequestBody taskDto: TaskDto) {
+    fun updateTask(@PathVariable id: Int,
+                   @RequestBody taskDto: TaskDto) {
         taskService.update(id, taskDto)
     }
 
